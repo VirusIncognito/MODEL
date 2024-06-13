@@ -104,33 +104,12 @@ def send_async_generation_request(
 image = "C:\\Users\\KIIT\\Desktop\\BITS Pilani Research Docs\\MODEL\\images\\cat.jpg"  # Update this path to your image location
 mask_prompt = input("Enter Mask Prompt: ")
 inpaint_prompt = input("Enter Inpaint Prompt: ")  # Your inpaint prompt
-negative_prompt = "low resolution, cartoonish, not realistic, bad quality"  # Your negative prompt
+negative_prompt = "bad quality, does not follow original prompt, blurry, changes the whole image, does not follow mask, changes original color, not coherent" # Your negative prompt
 seed = 0  # Seed value
-output_format = "webp"  # Output format: webp, jpeg, or png
+output_format = "jpeg"  # Output format: webp, jpeg, or png
 
 # Assuming you have a function Inference.create_mask() and Inference.get_predefined_input()
 mask = Inference.create_mask(Inference.get_predefined_input(image, mask_prompt))
-
-from PIL import Image
-
-def invert_and_convert_to_grayscale(image_path):
-    # Open the image
-    img = Image.open(image_path)
-    
-    # Convert the image to grayscale
-    grayscale_img = img.convert("L")
-    
-    # Invert the grayscale image
-    #inverted_img = Image.eval(grayscale_img, lambda x: 255 - x)
-    
-    # Save the inverted grayscale image
-    grayscale_img.save(image_path)
-
-# Call the function to invert, convert to grayscale, and save the mask
-invert_and_convert_to_grayscale(mask)
-
-
-
 
 host = "https://api.stability.ai/v2beta/stable-image/edit/inpaint"
 
