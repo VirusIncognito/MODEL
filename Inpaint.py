@@ -1,4 +1,3 @@
-from io import BytesIO
 import json
 import os
 from PIL import Image
