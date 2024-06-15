@@ -46,64 +46,11 @@ def send_generation_request(
 
     return response
 
-def send_async_generation_request(
-    host,
-    params,
-):
-    headers = {
-        "Accept": "application/json",
-        "Authorization": f"Bearer {STABILITY_KEY}"
-    }
-
-    # Encode parameters
-    files = {}
-    if "image" in params:
-        image = params.pop("image")
-        files = {"image": open(image, 'rb')}
-
-    # Send request
-    print(f"Sending REST request to {host}...")
-    response = requests.post(
-        host,
-        headers=headers,
-        files=files,
-        data=params
-    )
-    if not response.ok:
-        raise Exception(f"HTTP {response.status_code}: {response.text}")
-
-    # Process async response
-    response_dict = json.loads(response.text)
-    generation_id = response_dict.get("id", None)
-    assert generation_id is not None, "Expected id in response"
-
-    # Loop until result or timeout
-    timeout = int(os.getenv("WORKER_TIMEOUT", 500))
-    start = time.time()
-    status_code = 202
-    while status_code == 202:
-        response = requests.get(
-            f"{host}/result/{generation_id}",
-            headers={
-                **headers,
-                "Accept": "image/*"
-            },
-        )
-
-        if not response.ok:
-            raise Exception(f"HTTP {response.status_code}: {response.text}")
-        status_code = response.status_code
-        time.sleep(10)
-        if time.time() - start > timeout:
-            raise Exception(f"Timeout after {timeout} seconds")
-
-    return response
-
 # Define paths and parameters
-image = "C:\\Users\\KIIT\\Desktop\\BITS Pilani Research Docs\\MODEL\\images\\cat.jpg"  # Update this path to your image location
+image = "C:\\Users\\KIIT\\Desktop\\BITS Pilani Research Docs\\MODEL\\images\\dogs.jpg"  # Update this path to your image location
 mask_prompt = input("Enter Mask Prompt: ")
 inpaint_prompt = input("Enter Inpaint Prompt: ")  # Your inpaint prompt
-negative_prompt = "bad quality, does not follow original prompt, blurry, changes the whole image, does not follow mask, changes original color, not coherent" # Your negative prompt
+negative_prompt = "" # Your negative prompt
 seed = 0  # Seed value
 output_format = "jpeg"  # Output format: webp, jpeg, or png
 
